@@ -1,0 +1,87 @@
+<!--@author:无名-->
+<!--@datetime:2019/5/7 0007 15:13-->
+<!--@software: PyCharm-->
+{% extends "base.html" %}
+{% block content %}
+    <div style="height: 100%;width: 100%">
+        <div style="margin:auto;">
+            <div style="margin: 20px"><label><h3>数据统计</h3></label></div>
+            <br>
+            <form class="layui-form" autocomplete="off">
+                <div class="layui-form-item" style="display: inline-flex;">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">时间</label>
+                        <div class="layui-input-inline" style="width: 150px;">
+                            <input type="text" name="orderTimeStart" id="date-time" placeholder="开始" class="layui-input"
+                                   lay-key="1">
+                        </div>
+                    </div>
+                    <div>
+                        <input class="layui-btn layui-btn-normal" onclick="getInfo()" value="提交">
+                    </div>
+                </div>
+            </form>
+            <div id="demo">
+
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+{% block script %}
+    <script>
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+            laydate.render({
+                elem: '#date-time', //指定元素
+                type: "month",
+                value: new Date(),
+                theme: 'molv',
+                max: '{{ year }}-{{ month }}'
+            });
+        });
+
+        function data_show(data) {
+            layui.use('table', function () {
+                var table = layui.table;
+                table.render({
+                    elem: '#demo',
+                    width: 1306,
+                    data: data.data,
+                    page: false,
+                    cols:
+                        [[
+                            {field: 'group_title', title: '对接组', width: 320, fixed: 'left'},
+                            {field: 'company_code', title: '公司', width: 200}
+                            , {field: 'entry_count', title: '已入职数量', width: 260}
+                            , {field: 'admit_count', title: '录取数量', width: 260}
+                            , {field: 'underway_count', title: '进行中数量', width: 260}
+                        ]]
+                });
+            })
+        }
+
+        function show_table(year, month) {
+            layui.use('layer', function () {
+                var layer = layui.layer;
+                rmsajax.get({
+                    url:"{% url 'report:companyReportAjax' %}",
+                    data:{"year":year,"month":month},
+                    success: function (result) {
+                        if (result['code'] === 200) {
+                            data_show(result)
+                        }
+                    }
+                })
+            })
+        }
+
+        show_table({{ year }}, {{ month }});
+
+        function getInfo() {
+            var [year, month] = $("#date-time").val().split("-");
+            show_table(year, month)
+        }
+    </script>
+{% endblock %}

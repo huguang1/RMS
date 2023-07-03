@@ -1,0 +1,188 @@
+<!--@author:无名-->
+<!--@datetime:2019/5/9 0009 15:16-->
+<!--@software: PyCharm-->
+{% extends "base.html" %}
+{% block content %}
+    <div class="layui-tab">
+        <ul class="layui-tab-title">
+            <li class="layui-this">录取分析</li>
+            <li>离职率分析</li>
+        </ul>
+        <div class="layui-tab-content">
+
+            <div class="layui-tab-item layui-show">
+
+                <form class="layui-form" autocomplete="off">
+                    <div class="layui-form-item" style="display: inline-flex;">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">起始时间</label>
+                            <div class="layui-input-inline" style="width: 150px;">
+                                <input type="text" name="orderTimeStart" id="start-time" placeholder="开始"
+                                       class="layui-input"
+                                >
+                            </div>
+                            <label class="layui-form-label">结束时间</label>
+                            <div class="layui-input-inline" style="width: 150px;">
+                                <input type="text" name="orderTimeStart" id="end-time" placeholder="开始"
+                                       class="layui-input"
+                                >
+                            </div>
+                        </div>
+                        <div>
+                            <input class="layui-btn layui-btn-normal" onclick="getAdmitInfo()" value="提交" style="width: 160px;">
+                        </div>
+                    </div>
+                </form>
+                <div id="admit-table">
+                </div>
+            </div>
+
+            <div class="layui-tab-item">
+                <form class="layui-form" autocomplete="off">
+                    <div class="layui-form-item" style="display: inline-flex;">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">起始时间</label>
+                            <div class="layui-input-inline" style="width: 150px;">
+                                <input type="text" name="orderTimeStart" id="start-time1" placeholder="开始"
+                                       class="layui-input"
+                                >
+                            </div>
+                            <label class="layui-form-label">结束时间</label>
+                            <div class="layui-input-inline" style="width: 150px;">
+                                <input type="text" name="orderTimeStart" id="end-time1" placeholder="开始"
+                                       class="layui-input"
+                                >
+                            </div>
+                        </div>
+                        <div>
+                            <input class="layui-btn layui-btn-normal" onclick="getLeaveInfo()" value="提交" style="width: 160px;">
+                        </div>
+                    </div>
+                </form>
+                <div id="leave-table">
+                </div></div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block script %}
+    <script>
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+            laydate.render({
+                elem: '#start-time', //指定元素
+                trigger: 'click',
+                type: "date",
+                value: {{ year }} +"-" + {{ month }}+"-1",
+                theme: 'molv',
+                max: '{{ year }}-{{ month }}-{{ day }}'
+            });
+            laydate.render({
+                elem: '#end-time', //指定元素
+                trigger: 'click',
+                type: "date",
+                value: new Date(),
+                theme: 'molv',
+                max: '{{ year }}-{{ month }}-{{ day }}'
+            });
+             laydate.render({
+                elem: '#start-time1', //指定元素
+                trigger: 'click',
+                type: "date",
+                value: {{ year }} +"-" + {{ month }}+"-1",
+                theme: 'molv',
+                max: '{{ year }}-{{ month }}-{{ day }}'
+            });
+            laydate.render({
+                elem: '#end-time1', //指定元素
+                trigger: 'click',
+                type: "date",
+                value: new Date(),
+                theme: 'molv',
+                max: '{{ year }}-{{ month }}-{{ day }}'
+            });
+        });
+
+        function admit_show(data) {
+            layui.use('table', function () {
+                var table = layui.table;
+                var company = data.data.company;
+                var col = [{field: 'group_user', title: '所属', width: 120, fixed: 'left'}];
+                var w = company.length * 101 + 122;
+                $.each(company, function (i, item) {
+                    col.push({field: item, title: item, width: 100})
+
+                });
+                table.render({
+                    elem: '#admit-table'
+                    , width: w
+                    , data: data.data.report
+                    , page: false
+                    , cols: [col]
+                });
+            })
+        }
+        function leave_show(data) {
+            layui.use('table', function () {
+                var table = layui.table;
+
+                table.render({
+                    elem: '#leave-table'
+                    , width:605
+                    , data: data.data
+                    , page: false
+                    , cols:  [[
+                        {field: 'company', title: '公司', width: 120, fixed: 'left'}
+                        , {field: 'entry_count', title: '入职总数', width: 160, sort: true}
+                        , {field: 'leave_count', title: '离职总数', width: 140, sort: true}
+                        , {field: 'percent', title: '离职率', width: 180, sort: true}
+                    ]]
+                });
+            })
+        }
+
+        function show_admit(start_time, end_time) {
+            layui.use('layer', function () {
+                var layer = layui.layer;
+                rmsajax.get({
+                    url: "{% url 'report:admitReportAjax' %}",
+                    data:{"start":start_time,"end":end_time},
+                    success: function (result) {
+                        if (result['code'] === 200) {
+                            admit_show(result);
+                        }
+                    }
+                })
+            })
+        }
+        function show_leave(start_time, end_time) {
+            layui.use('layer', function () {
+                var layer = layui.layer;
+                rmsajax.get({
+                    url:"{% url 'report:leaveReportAjax' %}",
+                    data:{"start":start_time,"end":end_time},
+                    success: function (result) {
+                        if (result['code'] === 200) {
+                            leave_show(result);
+                        }
+                    }
+                })
+            })
+        }
+
+        show_admit({{ year }} +"-" + {{ month }}+'-1', {{ year }} +"-" + {{ month }}+'-' + {{ day }});
+        show_leave({{ year }} +"-" + {{ month }}+'-1', {{ year }} +"-" + {{ month }}+'-' + {{ day }});
+        function getAdmitInfo() {
+            var start_time = $("#start-time").val();
+            var end_time = $("#end-time").val();
+            show_admit(start_time,end_time)
+        }
+        function getLeaveInfo() {
+            var start_time = $("#start-time1").val();
+            var end_time = $("#end-time1").val();
+            show_leave(start_time,end_time)
+        }
+
+    </script>
+{% endblock %}
+

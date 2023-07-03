@@ -1,0 +1,122 @@
+<!--
+@author: 技术-小明
+@time: 2019-04-05 16:26:31
+@file: index.html
+@desc:
+-->
+
+{% extends 'base.html' %}
+
+{% block head %}
+    <style>
+        .content-text {
+            display: block;
+            line-height: 38px;
+        }
+        .content-title {
+            font-weight: 600;
+        }
+    </style>
+{% endblock %}
+
+{% block title %}人才管理{% endblock %}
+
+{% block content-nav %}
+    <span class="content-nav-item">></span>
+    <span class="content-nav-item">人才管理</span>
+    <span class="content-nav-item">></span>
+    <span class="content-nav-item">人才详情</span>
+{% endblock %}
+
+{% block content %}
+
+    <div class="layui-card">
+        <div class="layui-card-header" style="padding: 0;">
+            <h2 class="layui-colla-title">基本信息
+                <i class="layui-icon layui-colla-icon"></i>
+            </h2>
+        </div>
+        <div class="layui-card-body">
+            <div class="layui-row layui-col-space12">
+                <div class="layui-col-md3">
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label content-title">姓名：</label>
+                        <div class="layui-input-inline">
+                            <span class="content-text">{{ data.name }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md3">
+                    <div class="layui-inline">
+                        <label class="layui-form-label content-title">性别：</label>
+                        <div class="layui-input-inline">
+                            {% if data.gender %}
+                                <span class="content-text">男</span>
+                            {% else %}
+                                <span class="content-text">女</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md3">
+                    <div class="layui-inline">
+                        <label class="layui-form-label content-title">招聘员：</label>
+                        <div class="layui-input-inline">
+                            <span class="content-text">{{ data.user.username }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md3">
+                    <div class="layui-inline">
+                        <label class="layui-form-label content-title">区域：</label>
+                        <div class="layui-input-inline">
+                            <span class="content-text">{{ data.region.name }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-row layui-col-space12">
+
+                <div class="layui-col-md3">
+                    <div class="layui-inline">
+                        <label class="layui-form-label content-title">状态：</label>
+                        <div class="layui-input-inline">
+                            <span class="content-text">{{ data.get_status_display }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md3">
+                    <div class="layui-inline">
+                        <label class="layui-form-label content-title">招聘途径：</label>
+                        <div class="layui-input-inline">
+                            <span class="content-text">{{ data.channel.name }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md3">
+                    <div class="layui-inline">
+                        <label class="layui-form-label content-title">期待岗位：</label>
+                        <div class="layui-input-inline">
+                            <span class="content-text">{{ data.expect_job }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md3">
+                    <div class="layui-inline">
+                        <label class="layui-form-label content-title">应聘过的公司：</label>
+                        <div class="layui-input-inline">
+                            <span class="content-text">{% for interviewed in data.interviewed_company.all %}{{ interviewed.name }}&nbsp;&nbsp;{% endfor %}</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/talent.min.js' %}"></script>
+{% endblock %}

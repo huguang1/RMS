@@ -1,0 +1,293 @@
+<!--
+@author: 技术-小明
+@time: 2019-04-11 13:38:09
+@file: rms_user.html
+@desc:
+-->
+
+{% extends 'base.html' %}
+
+{% block title %}用户管理{% endblock %}
+
+
+{% block tan %}
+    <div id="rms-add-user-tan" class="tan">
+
+        <div class="rms-tan-container" style="margin-top: 24px; margin-right: 30px;">
+            <form class="layui-form" id="rms-add-user-form">
+
+                <div class="layui-row" style="margin-bottom: 20px">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">用户账号：</label>
+                        <div class="layui-input-block">
+                            <input id="rms-add-user-username" type="text" name="ussername" required
+                                   lay-verify="required" placeholder=""
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">登录密码：</label>
+                        <div class="layui-input-block">
+                            <input id="rms-add-user-password-1" type="password" name="password-1" required
+                                   lay-verify="required" placeholder=""
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">确认密码：</label>
+                        <div class="layui-input-block">
+                            <input id="rms-add-user-password-2" type="password" name="password-2" required
+                                   lay-verify="required" placeholder=""
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">用户备注：</label>
+                        <div class="layui-input-block">
+                            <input id="rms-add-user-desc" type="text" name="desc" required
+                                   lay-verify="required" placeholder=""
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">选择角色：</label>
+                        <div class="layui-input-block">
+                            {% for role in roles %}
+                                <input type="checkbox" name="add-user-role" value="{{ role.id }}"
+                                       title="{{ role.name }}" lay-skin="primary">
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">选用户组：</label>
+                        <div class="layui-input-block">
+                            {% for group in groups %}
+                                <input type="radio" name="add-user-group" value="{{ group.id }}"
+                                       title="{{ group.title }}" lay-skin="primary">
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">是否冻结：</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="user-status" value="0" title="否" checked>
+                            <input type="radio" name="user-status" value="1" title="是">
+                        </div>
+                    </div>
+                    <div class="layui-form-item" style="margin-left: 110px">
+                        <input type="button" id="rms-add-user-submit" class="layui-btn" value="提交">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="rms-edit-user-tan" class="tan">
+
+        <div class="rms-tan-container" style="margin-top: 24px; margin-right: 30px;">
+            <form class="layui-form" id="rms-edit-user-form">
+
+                <div class="layui-row" style="margin-bottom: 20px">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">用户账号：</label>
+                        <div class="layui-input-block">
+                            <span id="rms-edit-user-username" style="line-height: 36px"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">用户备注：</label>
+                        <div class="layui-input-block">
+                            <input id="rms-edit-user-desc" type="text" name="desc" required
+                                   lay-verify="required" placeholder=""
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">选择角色：</label>
+                        <div class="layui-input-block">
+                            {% for role in roles %}
+                                <input type="checkbox" name="edit-user-role" value="{{ role.id }}"
+                                       title="{{ role.name }}" lay-skin="primary">
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">选用户组：</label>
+                        <div class="layui-input-block">
+                            {% for group in groups %}
+                                <input type="radio" name="edit-user-group" value="{{ group.id }}"
+                                       title="{{ group.title }}" lay-skin="primary">
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">是否冻结：</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="user-edit-status" value="1" title="是">
+                            <input type="radio" name="user-edit-status" value="0" title="否">
+                        </div>
+                    </div>
+                    <div class="layui-form-item" style="margin-left: 110px">
+                        <input type="button" id="rms-edit-user-submit" class="layui-btn" value="提交">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content-nav %}
+    <span class="content-nav-item">></span>
+    <span class="content-nav-item">用户管理</span>
+{% endblock %}
+
+{% block toolbar %}
+    <div class="content-main-toolbar">
+        <button class="layui-btn layui-btn-sm content-main-tool-left-item" id="rms-add-user">
+            <i class="layui-icon layui-icon-add-1"></i>
+            添加用户
+        </button>
+        <span class="content-main-tool-right-item">共有数据：<strong id="user-total_count">{{ count }}</strong> 条</span>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>会员帐号</th>
+            <th>状态</th>
+            <th>备注</th>
+            <th>角色</th>
+            <td>用户组</td>
+            <th>上次登录时间</th>
+            <th>上次登录IP</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="rms-user-data">
+        {% for user in data %}
+            <tr>
+                <td class="user-username">{{ user.username }}</td>
+                {% if user.is_active %}
+                    <td class="user-is_active" data-value="0"><span class="layui-badge layui-bg-blue">已启用</span></td>
+                {% else %}
+                    <td class="user-is_active" data-value="1"><span class="layui-badge layui-bg-gray">未启用</span></td>
+                {% endif %}
+
+                <td class="user-user_desc">{{ user.user_desc }}</td>
+                <td class="user-roles">{% for role in user.roles.all %}{{ role.name }}&nbsp;&nbsp;{% endfor %}</td>
+                <td class="user-group" data-value="{{ user.group.id }}">{{ user.group.title }}</td>
+                <td>{{ user.last_login }}</td>
+                <td>{{ user.last_login_ip }}</td>
+                <td data-value="{{ user.id }}" data-r="{% for role in user.roles.all %}{{ role.id }},{% endfor %}">
+                    <button class="layui-btn layui-btn-xs layui-btn-warm rms-edit-user-btn"><i
+                            class="layui-icon layui-icon-edit"></i>编辑
+                    </button>
+                    <button class="layui-btn layui-btn-xs layui-btn-warm rms-chpwd-user-btn"><i
+                            class="layui-icon layui-icon-edit"></i>改密
+                    </button>
+                    <button class="layui-btn layui-btn-xs layui-btn-danger rms-delete-user-btn"><i
+                            class="layui-icon layui-icon-delete"></i>删除
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block page %}
+    <div id="rms-user-page">
+        {#上一页#}
+        {% if data.has_previous %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ data.previous_page_number }}">上一页</a>
+        {% endif %}
+
+        {# 是否需要出现三个点 #}
+        {% if left_has_more %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="1">1</a>
+            <span class="page-common">...</span>
+        {% endif %}
+
+        {# 左边的页码 #}
+        {% for left_page in left_pages %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ left_page }}">{{ left_page }}</a>
+        {% endfor %}
+
+        {# 当前的页面 #}
+        <span class="cur page-common">{{ current_page }}</span>
+
+        {# 右边的页码 #}
+        {% for right_page in right_pages %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ right_page }}">{{ right_page }}</a>
+        {% endfor %}
+
+        {# 用来控制右边三个点 #}
+        {% if right_has_more %}
+            <span class="page-common">...</span>
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ num_pages }}">{{ num_pages }}</a>
+        {% endif %}
+
+        {#下一页#}
+        {% if data.has_next %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ data.next_page_number }}">下一页</a>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block script %}
+
+    <script id="rms-user-tpl" type="text/html">
+        {% verbatim %}
+        {{ each data user index }}
+        <tr>
+            <td class="user-username">{{ user.username }}</td>
+            {{ if user.is_active }}
+            <td class="user-is_active" data-value="0"><span class="layui-badge layui-bg-blue">已启用</span></td>
+            {{ else }}
+            <td class="user-is_active" data-value="1"><span class="layui-badge layui-bg-gray">未启用</span></td>
+            {{ /if }}
+
+            <td class="user-user_desc">{{ user.user_desc }}</td>
+            <td class="user-roles">{{ each user.roles role index }}{{ role.name}}&nbsp;&nbsp;{{ /each }}</td>
+            <td class="user-group" data-value="{{ user.group.id }}">{{ user.group.title }}</td>
+            <td>{{ user.last_login }}</td>
+            <td>{{ user.last_login_ip }}</td>
+            <td data-value="{{ user.id }}" data-r="{{ each user.roles role index }}{{ role.id}},{{ /each }}">
+                <button class="layui-btn layui-btn-xs layui-btn-warm rms-edit-user-btn"><i
+                        class="layui-icon layui-icon-edit"></i>编辑
+                </button>
+                <button class="layui-btn layui-btn-xs layui-btn-warm rms-chpwd-user-btn"><i
+                        class="layui-icon layui-icon-edit"></i>改密
+                </button>
+                <button class="layui-btn layui-btn-xs layui-btn-danger rms-delete-user-btn"><i
+                        class="layui-icon layui-icon-delete"></i>删除
+                </button>
+            </td>
+        </tr>
+        {{ /each }}
+        {% endverbatim %}
+    </script>
+
+    <script src="{% static 'js/user.min.js' %}"></script>
+
+    <script>
+        $(function () {
+            var user = new User();
+            user.run();
+        });
+    </script>
+{% endblock %}

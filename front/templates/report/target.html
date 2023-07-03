@@ -1,0 +1,68 @@
+<!--@author:无名-->
+<!--@datetime:2019/5/12 0012 13:27-->
+<!--@software: PyCharm-->
+{% extends "base.html" %}
+{% block title %}
+    目标填写
+{% endblock %}
+{% block content %}
+    <div style="margin-bottom: 40px;">
+    <a href="{% url "report:targetReport" %}" class="layui-btn">查看目标进度</a>
+    </div>
+    <div style="margin-bottom: 20px">
+        <h2 class="layui-colla-title">{{ request.user.group.title }}{{ year }}年{{ month }}月目标编辑</h2>
+    </div>
+    <form class="layui-form" action="" id="form1">
+        <div class="layui-form-item">
+            <label class="layui-form-label">组员人数</label>
+            <div class="layui-input-block" style="width:30%;">
+                <input type="text" name="group_count" required lay-verify="required" placeholder="请输入数量" value="{{ target.group_count }}"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">新增简历</label>
+            <div class="layui-input-block" style="width:30%;">
+                <input type="text" name="new_resume" required lay-verify="required" placeholder="请输入数量"
+                       value="{{ target.new_resume }}" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">预计录取</label>
+            <div class="layui-input-block" style="width:30%;">
+                <input type="text" name="admit_count" required lay-verify="required" placeholder="请输入数量"
+                       value="{{ target.admit_count }}" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">预计报道人数</label>
+            <div class="layui-input-block" style="width:30%;">
+                <input type="text" name="entry_count" required lay-verify="required" placeholder="请输入数量"
+                       value="{{ target.entry_count }}" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input class="layui-btn" value="立即提交" onclick="postTarget()">
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+
+        </div>
+    </form>
+{% endblock %}
+{% block script %}
+    <script>
+        function postTarget() {
+            rmsajax.post({
+                data: $("#form1").serialize(),
+                url: "{% url 'report:target' %}",
+                success: function (result) {
+                    if (result['code'] === 200) {
+                        window.location = window.location.href;
+                    }
+                }
+            })
+        }
+    </script>
+{% endblock %}

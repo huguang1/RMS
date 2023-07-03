@@ -1,0 +1,277 @@
+<!--
+@author: 技术-小明
+@time: 2019-04-02 19:21:21
+@file: base.html
+@desc:
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'plugins/layui/css/layui.css' %}">
+    <link rel="stylesheet" href="{% static 'css/common/common.min.css' %}">
+    {% block head %}{% endblock %}
+</head>
+<body class="layui-layout-body">
+
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo"><h3>招聘管理系统</h3></div>
+        {% if request.user.is_authenticated %}
+            <ul class="layui-nav layui-layout-right" style="margin-right: 30px;">
+                <li class="layui-nav-item">
+                    <a href="javascript: void(0);">{{ user.username }}</a>
+                    <dl class="layui-nav-child">
+                        <dd><a id="current-chpwd-btn" href="javascript: void(0);">修改密码</a></dd>
+                        <dd><a href="/account/logout/">切换账号</a></dd>
+                        <dd><a href="/account/logout/">退出</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        {% endif %}
+    </div>
+
+    <div class="layui-side layui-bg-cyan">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree layui-bg-cyan layui-inline">
+                {% if user.is_superuser %}
+                    <li class="layui-nav-item">
+                        <a class="" href="javascript: void(0);">用户管理<span class="layui-nav-more"></span></a>
+                        <dl class="layui-nav-child">
+                            <dd><a class="menu-btn" href="/account/user/">用户管理</a></dd>
+                            <dd><a class="menu-btn" href="/account/usergroup/">用户组管理</a></dd>
+                            <dd><a class="menu-btn" href="/account/role/">角色管理</a></dd>
+                            <dd><a class="menu-btn" href="/account/permission/">权限管理</a></dd>
+                            <dd><a class="menu-btn" href="/account/menu/">菜单管理</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item">
+                        <a href="javascript: void(0);">统计分析</a>
+                        <dl class="layui-nav-child">
+                            <dd><a class="menu-btn" href="{% url 'report:groupReport' %}">各组统计</a></dd>
+                            <dd><a class="menu-btn" href="{% url 'report:companyReport' %}">公司统计</a></dd>
+                            <dd><a class="menu-btn" href="{% url 'report:admitReport' %}">入职离职分析</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item">
+                        <a href="javascript: void(0);">目标进度</a>
+                        <dl class="layui-nav-child">
+                            <dd><a class="menu-btn" href="{% url 'report:targetReport' %}">各组进度</a></dd>
+                            <dd><a class="menu-btn" href="{% url 'report:target' %}">目标填写</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item">
+                        <a href="javascript: void(0);">管理</a>
+                        <dl class="layui-nav-child">
+                            <dd><a class="menu-btn" href="{% url 'manager:company' %}">公司管理</a></dd>
+                            <dd><a class="menu-btn" href="{% url 'manager:recruitmentWay' %}">中介管理</a></dd>
+                            <dd><a class="menu-btn" href="{% url 'manager:job' %}">岗位管理</a></dd>
+                            <dd><a class="menu-btn" href="{% url 'manager:jobDemand' %}">岗位需求</a></dd>
+                            <dd><a class="menu-btn" href="{% url 'manager:foreignJobDemand' %}">外籍需求</a></dd>
+                            <dd><a class="menu-btn" href="{% url 'manager:urgencyJobDemand' %}">限时悬赏</a></dd>
+                        </dl>
+                    </li>
+                {% else %}
+                    {% if menus %}
+                        {% for data in menus %}
+                            <li class="layui-nav-item">
+                                <a class="" href="javascript: void(0);">{{ data.menu.title }}</a>
+                                <dl class="layui-nav-child">
+                                    {% for children in data.children %}
+                                        <dd><a class="menu-btn" href="{{ children.url }}">{{ children.title }}</a></dd>
+                                    {% endfor %}
+                                </dl>
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 导航 -->
+        <div class="content-nav">
+            <nav class="content-nav-body">
+                <i class="layui-icon layui-icon-home home-icon"></i>
+                <a class="content-nav-item home-btn" href="/">主页</a>
+                {% block content-nav %}{% endblock %}
+            </nav>
+        </div>
+        <!-- 内容主体区域 -->
+        <div class="body-content-main">
+            <!--
+            工具栏
+            <div class="content-main-toolbar"></div>
+            -->
+            {% block toolbar %}{% endblock %}
+
+            <div class="content-main-body">
+                {% block content %} {% endblock %}
+            </div>
+            <div class="content-main-page">
+                {% block page %}{% endblock %}
+            </div>
+            {% block paginator %}{% endblock %}
+
+        </div>
+
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © layui.com - 招聘管理系统
+    </div>
+</div>
+<script src="{% static 'plugins/JQuery/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'plugins/arttemplate/template-web.js' %}"></script>
+<script src="{% static 'plugins/layui/layui.js' %}"></script>
+<script src="{% static 'js/rmsajax.min.js' %}"></script>
+<script src="{% static 'js/common.min.js' %}"></script>
+
+<script id="page-item" type="text/html">
+    {% verbatim %}
+    {{ if current_page != 1 }}
+    <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ current_page|minusOne }}">上一页</a>
+    {{/if}}
+
+    {{ if left_has_more }}
+    <a class="page-common page-btn" href="javascript: void(0);" data-p="1">1</a>
+    <span class="page-common">...</span>
+    {{ /if }}
+
+    {{ each left_pages left_page index }}
+    <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ left_page }}">{{ left_page }}</a>
+    {{ /each }}
+
+    <span class="cur page-common">{{ current_page }}</span>
+
+    {{ each right_pages right_page index }}
+    <a class="page-common page-btn" href="javascript:void(0);" data-p="{{ right_page }}">{{ right_page }}</a>
+    {{ /each }}
+
+    {{ if right_has_more }}
+    <span class="page-common">...</span>
+    <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ num_pages }}">{{ num_pages }}</a>
+    {{ /if }}
+
+    {{ if num_pages != current_page }}
+    <a class="page-common page-btn" href="javascript:void(0);" data-p="{{ current_page|plusOne  }}">下一页</a>
+    {{ /if }}
+    {% endverbatim %}
+</script>
+
+{% block tan %}{% endblock %}
+<div id="rms-chpwd-user-tan" class="tan">
+    <div class="rms-tan-container" style="margin-top: 24px; margin-right: 30px;">
+        <form class="layui-form" id="rms-chpwd-user-form">
+
+            <div class="layui-row" style="margin-bottom: 20px">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户账号：</label>
+                    <div class="layui-input-block">
+                        <span id="rms-chpwd-user-username" style="line-height: 36px">{{ user.username }}</span>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">登录密码：</label>
+                    <div class="layui-input-block">
+                        <input id="rms-chpwd-user-password-1" type="password" name="password-1" required
+                               lay-verify="required" placeholder=""
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">确认密码：</label>
+                    <div class="layui-input-block">
+                        <input id="rms-chpwd-user-password-2" type="password" name="password-2" required
+                               lay-verify="required" placeholder=""
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item" style="margin-left: 110px">
+                    <input type="button" id="rms-chpwd-user-submit" class="layui-btn" value="提交">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="{% static 'js/user.min.js' %}"></script>
+<script>
+    $(function () {
+        layui.use(['layer', 'form', 'element'], function () {
+            var $ = layui.jquery;
+            var layer = layui.layer;
+            var form = layui.form;
+            var element = layui.element;
+        });
+
+        var current_url = window.location.pathname;
+
+        $(".menu-btn").each(
+            function () {
+                var current_nemu = $(this);
+                var current_href = current_nemu.attr("href");
+                if (current_url === current_href) {
+                    current_nemu.parent('dd').addClass('layui-this').siblings().removeClass('layui-this');
+                    current_nemu.parent('dd').parent().parent().addClass('layui-nav-itemed').siblings().removeClass('layui-nav-itemed');
+                }
+            });
+
+        var user = new User();
+        user.currentChpwdEvent();
+
+        // 加载了arttemplate才执行下面代码
+        if (window.template) {
+            // 加一过滤器
+            template.defaults.imports.plusOne = function (data_num) {
+                return data_num + 1;
+            };
+            // 减一过滤器
+            template.defaults.imports.minusOne = function (data_num) {
+                return data_num - 1;
+            };
+
+            // 时间日期格式过滤器
+            template.defaults.imports.timeFormat = function (dateValue) {
+                if (dateValue) {
+                    var d = new Date(dateValue);
+                    var year = d.getFullYear();
+                    var month = d.getMonth() + 1;
+                    var day = d.getDate();
+                    var hour = d.getHours();
+                    var minute = d.getMinutes();
+
+                    return year + '年' + month + '月' + day + "日 " + hour + ":" + minute;
+                } else {
+                    return null
+                }
+
+            };
+            // 日期过滤器
+            template.defaults.imports.dateFormat = function (dateValue) {
+                if (dateValue) {
+                    var d = new Date(dateValue);
+                    var day = d.getDate();
+                    var month = d.getMonth() + 1;
+                    var year = d.getFullYear();
+
+                    return year + '年' + month + '月' + day + "日"
+                } else {
+                    return null
+                }
+            };
+        }
+    });
+</script>
+
+{% block script %}{% endblock %}
+</body>
+</html>

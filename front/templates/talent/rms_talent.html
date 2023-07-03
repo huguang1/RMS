@@ -1,0 +1,154 @@
+<!--
+@author: 技术-小明
+@time: 2019-04-05 16:26:31
+@file: index.html
+@desc:
+-->
+
+{% extends 'base.html' %}
+
+{% block title %}人才管理{% endblock %}
+
+{% block content-nav %}
+    <span class="content-nav-item">></span>
+    <span class="content-nav-item">人才管理</span>
+{% endblock %}
+
+{% block toolbar %}
+    <div class="content-main-toolbar">
+        <button class="layui-btn layui-btn-sm content-main-tool-left-item" id="rms-add-talent">
+            <i class="layui-icon layui-icon-add-1"></i>
+            添加人才
+        </button>
+        <span class="content-main-tool-right-item">共有数据：<strong
+                id="rms-talent-total_count">{{ count }}</strong> 条</span>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>区域</th>
+            <th>招聘员</th>
+            <th>招聘途径</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="rms-talent-data">
+        {% for talent in data %}
+            <tr>
+                <td>{{ talent.name }}</td>
+                {% if talent.gender %}
+                    <td>男</td>
+                {% else %}
+                    <td>女</td>
+                {% endif %}
+                <td>{{ talent.region.name }}</td>
+                <td>{{ talent.user.username }}</td>
+                <td>{{ talent.channel.name }}</td>
+                <td>{{ talent.get_status_display }}</td>
+                <td data-value="">
+                    <button class="layui-btn layui-btn-xs layui-btn-warm rms-edit-user-btn"><i
+                            class="layui-icon layui-icon-edit"></i>编辑
+                    </button>
+
+                    <a class="layui-btn layui-btn-xs rms-chpwd-user-btn" href="/talent/detail/{{ talent.id }}/"><i
+                            class="layui-icon layui-icon-read"></i>查看详情
+                    </a>
+
+                    <button class="layui-btn layui-btn-xs rms-chpwd-user-btn"><i
+                            class="layui-icon layui-icon-read"></i>面试管理
+                    </button>
+
+                    <button class="layui-btn layui-btn-xs layui-btn-danger rms-delete-user-btn"><i
+                            class="layui-icon layui-icon-delete"></i>删除
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block page %}
+    <div id="rms-talent-page">
+        {#上一页#}
+        {% if data.has_previous %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ data.previous_page_number }}">上一页</a>
+        {% endif %}
+
+        {# 是否需要出现三个点 #}
+        {% if left_has_more %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="1">1</a>
+            <span class="page-common">...</span>
+        {% endif %}
+
+        {# 左边的页码 #}
+        {% for left_page in left_pages %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ left_page }}">{{ left_page }}</a>
+        {% endfor %}
+
+        {# 当前的页面 #}
+        <span class="cur page-common">{{ current_page }}</span>
+
+        {# 右边的页码 #}
+        {% for right_page in right_pages %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ right_page }}">{{ right_page }}</a>
+        {% endfor %}
+
+        {# 用来控制右边三个点 #}
+        {% if right_has_more %}
+            <span class="page-common">...</span>
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ num_pages }}">{{ num_pages }}</a>
+        {% endif %}
+
+        {#下一页#}
+        {% if data.has_next %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ data.next_page_number }}">下一页</a>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script id="rms-talent-tpl" type="text/html">
+        {% verbatim %}
+        {{ each data talent index }}
+        <tr>
+            <td>{{ talent.name }}</td>
+            {{ if talent.gender }}
+            <td>男</td>
+            {{ else }}
+            <td>女</td>
+            {{ /if }}
+            <td>{{ talent.region.name }}</td>
+            <td>{{ talent.user.username }}</td>
+            <td>{{ talent.channel.name }}</td>
+            <td>{{ talent.status }}</td>
+            <td data-value="">
+                <button class="layui-btn layui-btn-xs layui-btn-warm rms-edit-user-btn"><i
+                        class="layui-icon layui-icon-edit"></i>编辑
+                </button>
+
+                <a class="layui-btn layui-btn-xs rms-chpwd-user-btn" href="/talent/detail/{{ talent.id }}/"><i
+                        class="layui-icon layui-icon-read"></i>查看详情
+                </a>
+
+                <button class="layui-btn layui-btn-xs rms-chpwd-user-btn"><i
+                        class="layui-icon layui-icon-read"></i>面试管理
+                </button>
+
+                <button class="layui-btn layui-btn-xs layui-btn-danger rms-delete-user-btn"><i
+                        class="layui-icon layui-icon-delete"></i>删除
+                </button>
+            </td>
+        </tr>
+        {{ /each }}
+        {% endverbatim %}
+    </script>
+    <script src="{% static 'js/talent.min.js' %}"></script>
+{% endblock %}

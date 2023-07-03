@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block title %}
+    公司管理
+{% endblock %}
+{% block tan %}
+    <form class="layui-form" action="" id="form1" style="display: none">
+        {% csrf_token %}
+        <div class="layui-form-item" style="margin-top: 20px">
+            <label class="layui-form-label">公司代码</label>
+            <div class="layui-input-block">
+                <input type="text" name="code" required lay-verify="required" placeholder="请输入公司代码" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">合作模式</label>
+            <div class="layui-input-block">
+                <input type="text" name="cooperation_models" required lay-verify="required" placeholder="请输入合作模式"
+                       autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">区域</label>
+            <div class="layui-input-block">
+                <input type="text" name="area" required lay-verify="required" placeholder="请输入区域" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">大楼</label>
+            <div class="layui-input-block">
+                <input type="text" name="block" required lay-verify="required" placeholder="请输入大楼" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">楼层</label>
+            <div class="layui-input-block">
+                <input type="text" name="floor" required lay-verify="required" placeholder="请输入楼层" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">地址</label>
+            <div class="layui-input-block">
+                <input type="text" name="addr" required lay-verify="required" placeholder="请输入地址" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">对接人</label>
+            <div class="layui-input-block">
+                <select name="hr_id" lay-verify="required">
+                    <option value=""></option>
+                    {% for hr in hr_list %}
+                        {% if hr.group %}
+                        <option value={{ hr.id }}>{{ hr.group.title }}--{{ hr.username }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">返佣</label>
+            <div class="layui-input-block">
+                <textarea name="rebate" placeholder="请输入返佣" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                {#                <button type="reset" class="layui-btn layui-btn-primary">重置</button>#}
+                <button class="layui-btn" lay-submit lay-filter="formDemo" onclick="postCompany();return false">立即提交
+                </button>
+            </div>
+        </div>
+    </form>
+
+
+{% endblock %}
+{% block content %}
+    <button class="layui-btn" onclick="onAddBtn()" id="company">添加公司</button>
+    <table class="layui-table" id="table">
+        <thead>
+        <tr>
+            <th>公司代码</th>
+            <th>合作形式</th>
+            <th>区域</th>
+            <th>大楼</th>
+            <th>楼层</th>
+            <th>对接组</th>
+            <th>对接人</th>
+            <th>地址</th>
+            <th>返佣</th>
+            <th>编辑</th>
+            <th>删除</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for company in posts %}
+            <tr>
+                <td>{{ company.code }}</td>
+                <td>{{ company.cooperation_models }}</td>
+                <td>{{ company.area }}</td>
+                <td>{{ company.block }}</td>
+                <td>{{ company.floor }}</td>
+                <td>{{ company.hr.group.title }}</td>
+                <td>{{ company.hr.username }}</td>
+                <td>{{ company.addr }}</td>
+                <td>{{ company.rebate }}</td>
+                <td>
+                    <button class="layui-btn layui-btn-warm layui-btn-sm" onclick="editCompany({{ company.id }})">编辑
+                    </button>
+                </td>
+                <td>
+                    <button class="layui-btn  layui-btn-danger layui-btn-sm" onclick="delCompany({{ company.id }})">删除
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+{% block paginator %}
+    {% include 'paginator.html' %}
+{% endblock %}
+{% block script %}
+    <script>
+        function onAddBtn() {
+            //页面层-自定义
+            layer.open({
+                type: 1,
+                title: "创建新的公司",
+                skin: 'layui-layer-rim',
+                area: ['800px', '600px'],
+                content: $("#form1"),
+            });
+        }
+
+        function postCompany() {
+            rmsajax.post({
+                data: $("#form1").serialize(),
+                url: "{% url 'manager:company' %}",
+                success: function (result) {
+                    if (result['code'] === 200) {
+                        window.location = window.location.href;
+                    }
+                }
+            })
+        }
+
+        function delCompany(id) {
+            rmsajax.delete({
+                url: "{% url 'manager:company' %}" + id + "/",
+                success: function (result) {
+                    window.location = window.location.href;
+                }
+            })
+        }
+
+        function editCompany(id) {
+            layer.open({
+                type: 2,
+                title: "编辑公司",
+                area: ['800px', '600px'],
+                content: "{% url 'manager:company' %}" + id + "/",
+                end: function () {
+                    window.location = window.location.href;
+                }
+            });
+        }
+
+
+        layui.use('laypage', function () {
+            var laypage = layui.laypage;
+
+            //执行一个laypage实例
+            laypage.render({
+                elem: 'test1',
+                limit: 10,
+                count: 50
+            });
+        });
+    </script>
+
+
+{% endblock %}

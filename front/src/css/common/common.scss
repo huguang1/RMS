@@ -1,0 +1,149 @@
+/*
+@author: 技术-小明
+@time: 2019-04-10 15:07:08
+@file: common.html
+@desc:
+*/
+
+// 默认隐藏弹窗
+.tan {
+  display: none;
+}
+
+.layui-side {
+  .layui-nav {
+    .layui-nav-child {
+      dd {
+        a {
+          &:hover {
+            background-color: #5FB878;
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+}
+
+.layui-body {
+  .content-nav {
+    background-color: #eee;
+    height: 40px;
+
+    .content-nav-body {
+      margin: 0 20px;
+      height: 40px;
+      line-height: 40px;
+      overflow: hidden;
+
+      .home-icon {
+        font-size: 18px;
+        font-weight: 500;
+        color: #393D49;
+        float: left;
+        margin-right: 4px;
+      }
+
+      .home-btn {
+        color: #1E9FFF;
+
+        &:hover {
+          color: blue;
+        }
+      }
+
+      .content-nav-item {
+        font-size: 14px;
+        height: 40px;
+        line-height: 40px;
+        display: block;
+        float: left;
+        margin-right: 8px;
+      }
+    }
+  }
+
+  .body-content-main {
+    margin: 20px;
+
+    .content-main-toolbar {
+      height: 40px;
+      background-color: #f5fafe;
+      border: solid 1px #eee;
+      overflow: hidden;
+
+      .content-main-tool-left-item {
+        float: left;
+        height: 30px;
+        display: block;
+        line-height: 30px;
+        margin-right: 8px;
+        margin-top: 5px;
+        margin-left: 8px;
+      }
+
+      .content-main-tool-right-item {
+        float: right;
+        margin-left: 8px;
+        margin-right: 8px;
+        margin-top: 5px;
+        height: 30px;
+        line-height: 30px;
+        display: block;
+      }
+    }
+
+    .content-main-body {
+      margin-top: 20px;
+    }
+
+    .layui-table {
+      thead {
+        tr {
+          th {
+            background-color: #f5fafe;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+
+    .content-main-page {
+      overflow: hidden;
+      height: 30px;
+      margin-top: 20px;
+
+      div {
+        .page-common {
+          line-height: 28px;
+          display: block;
+          float: left;
+          padding: 0 15px;
+          border-top: 1px solid #ddd;
+          border-bottom: 1px solid #ddd;
+          border-left: 1px solid #ddd;
+
+          &:last-child {
+            border-right: 1px solid #ddd;
+          }
+        }
+
+        a {
+          text-decoration: none;
+
+          &:hover {
+            color: #009688;
+          }
+        }
+
+        span.cur {
+
+
+          color: #fff;
+          background-color: #009688;
+        }
+      }
+    }
+
+  }
+}

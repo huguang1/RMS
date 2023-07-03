@@ -1,0 +1,58 @@
+body {
+  background-color: #f6f7f8;
+}
+
+.layadmin-user-login {
+  padding: 150px 0;
+
+  .layadmin-user-login-main {
+    background-color: #fff !important;
+    width: 376px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    border-radius: 10px;
+
+    .layadmin-user-login-box {
+      padding: 20px;
+    }
+
+    .layadmin-user-login-header {
+      text-align: center;
+      padding-top: 20px;
+    }
+
+    .layadmin-user-login-body {
+
+      .layui-form-item {
+        position: relative;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .layadmin-user-login-icon {
+          position: absolute;
+          left: 1px;
+          top: 1px;
+          width: 38px;
+          line-height: 36px;
+          text-align: center;
+          color: #d2d2d2;
+          font-family: layui-icon !important;
+          font-size: 16px;
+          font-style: normal;
+          -webkit-font-smoothing: antialiased;
+        }
+
+        .layui-input {
+          padding-left: 38px;
+        }
+
+        #get-vercode {
+          height: 38px;
+          width: 130px;
+        }
+      }
+    }
+  }
+}

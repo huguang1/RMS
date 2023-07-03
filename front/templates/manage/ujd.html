@@ -1,0 +1,168 @@
+{# #author:无名 #}
+{# #datetime:2019/4/18 0018 13:08#}
+{# #software: PyCharm#}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'plugins/layui/css/layui.css' %}">
+    <link rel="stylesheet" href="{% static 'css/common/common.min.css' %}">
+</head>
+<body>
+<form class="layui-form" action="" id="form2">
+    {% csrf_token %}
+    <div class="layui-form-item">
+        <label class="layui-form-label">对接人</label>
+        <div class="layui-input-block">
+            <select name="hr_id" lay-verify="required">
+                <option value="{{ ujd.hr.id }}">{{ ujd.hr.group.title }}--{{ ujd.hr.username }}</option>
+                {% for hr in hr_list %}
+                    {% if hr != ujd.hr %}
+                    <option value={{ hr.id }}>{{ hr.group.title }}--{{ hr.username }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">岗位</label>
+        <div class="layui-input-block">
+            <select name="job_id" lay-verify="required">
+                <option value="{{ ujd.job.id }}">{{ ujd.job.name }}</option>
+                {% for job in job_list %}
+                    {% if job != ujd.job %}
+                    <option value={{ job.id }}>{{ job.name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">返佣</label>
+        <div class="layui-input-block">
+            <input type="text" name="rebate" value="{{ ujd.rebate }}" required lay-verify="required" placeholder="请输入返佣"
+                   autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">岗位职责</label>
+        <div class="layui-input-block">
+            <textarea name="work" value="{{ ujd.work }}" placeholder="请输入岗位职责" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">任职资格</label>
+        <div class="layui-input-block">
+            <textarea name="need"  value="{{ ujd.need }}" placeholder="请输入任职资格" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-block">
+                <input type="radio" name="sex" value="{{ ujd.get_sex_display }}" title="男女不限" checked>
+                {% for sex in ujd.sexList %}
+                    {% if sex !=  ujd.get_sex_display %}
+                        <input type="radio" name="sex" value="{{ sex }}" title="{{ sex }}">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">学历</label>
+        <div class="layui-input-block">
+            <input type="text" name="edu"  value="{{ ujd.edu }}" required lay-verify="required" placeholder="请输入学历"
+                   autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">必备条件</label>
+        <div class="layui-input-block">
+            <textarea name="essential_condition"  value="{{ ujd.essential_condition }}" placeholder="请输入必备条件" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">薪资</label>
+        <div class="layui-input-block">
+            <input type="text" name="salary"  value="{{ ujd.salary }}" required lay-verify="required" placeholder="请输入薪资" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">提成绩效</label>
+        <div class="layui-input-block">
+            <textarea name="performance"  value="{{ ujd.performance }}" placeholder="请输入提成绩效" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">工作时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="work_time"  value="{{ ujd.work_time }}" required lay-verify="required" placeholder="请输入工作时间"
+                   autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">工作地点</label>
+        <div class="layui-input-block">
+            <input type="text" name="work_addr"  value="{{ ujd.work_addr }}" required lay-verify="required" placeholder="请输入工作地点"
+                   autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+            <input type="text" name="status"  value="{{ ujd.status }}" required lay-verify="required" placeholder="请输入状态"
+                   autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+            <textarea name="note"  value="{{ ujd.note }}" placeholder="请输入备注" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            {#                <button type="reset" class="layui-btn layui-btn-primary">重置</button>#}
+            <button class="layui-btn" lay-submit lay-filter="formDemo" onclick="putUJD({{ ujd.id }});return false">
+                立即提交
+            </button>
+        </div>
+    </div>
+</form>
+</body>
+<script src="{% static 'plugins/JQuery/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'plugins/layui/layui.js' %}"></script>
+<script src="{% static 'js/rmsajax.min.js' %}"></script>
+<script src="{% static 'js/common.min.js' %}"></script>
+<script>
+    $(function () {
+        layui.use(['layer', 'form', 'element'], function () {
+            var $ = layui.jquery;
+            var layer = layui.layer;
+            var form = layui.form;
+            var element = layui.element;
+        });
+    });
+
+    function putUJD(id) {
+        console.log($("#form2").serialize());
+        rmsajax.put({
+            url: "{% url 'manager:urgencyJobDemand' %}" + id + "/",
+            data: $("#form2").serialize(),
+            success: function (result) {
+                if (result['code'] === 200) {
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index);
+                }
+            }
+        })
+
+    }
+</script>
+</html>

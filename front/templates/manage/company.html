@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'plugins/layui/css/layui.css' %}">
+    <link rel="stylesheet" href="{% static 'css/common/common.min.css' %}">
+</head>
+<body>
+<form class="layui-form" action="" id="form2">
+    {% csrf_token %}
+    <div class="layui-form-item" style="margin-top: 20px;">
+        <label class="layui-form-label">公司代码</label>
+        <div class="layui-input-block">
+            <input type="text" name="code" required value="{{ company.code }}" lay-verify="required"
+                   placeholder="请输入公司代码" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">合作模式</label>
+        <div class="layui-input-block">
+            <input type="text" name="cooperation_models" value="{{ company.cooperation_models }}" required
+                   lay-verify="required" placeholder="请输入合作模式" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">区域</label>
+        <div class="layui-input-block">
+            <input type="text" name="area" value="{{ company.area }}" required lay-verify="required" placeholder="请输入区域"
+                   autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">大楼</label>
+        <div class="layui-input-block">
+            <input type="text" name="block" value="{{ company.block }}" required lay-verify="required"
+                   placeholder="请输入大楼" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">楼层</label>
+        <div class="layui-input-block">
+            <input type="text" name="floor" value="{{ company.floor }}" required lay-verify="required"
+                   placeholder="请输入楼层" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址</label>
+        <div class="layui-input-block">
+            <input type="text" name="addr" value="{{ company.addr }}" required lay-verify="required" placeholder="请输入地址"
+                   autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">对接人</label>
+        <div class="layui-input-block">
+            <select name="hr_id" lay-verify="required">
+                <option value="{{company.hr.id }}">{{ company.hr.group.title }}--{{ company.hr.username }}</option>
+                {% for hr in hr_list %}
+                    {% if hr != company.hr %}
+                        <option value={{ hr.id }}>{{ hr.group.title }}--{{ hr.username }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">返佣</label>
+        <div class="layui-input-block">
+            <textarea name="rebate" placeholder="请输入返佣" class="layui-textarea">{{ company.rebate }}</textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            {#                <button type="reset" class="layui-btn layui-btn-primary">重置</button>#}
+            <button class="layui-btn" lay-submit lay-filter="formDemo"
+                    onclick="putCompany({{ company.id }});return false">立即提交
+            </button>
+        </div>
+    </div>
+</form>
+</body>
+<script src="{% static 'plugins/JQuery/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'plugins/layui/layui.js' %}"></script>
+<script src="{% static 'js/rmsajax.min.js' %}"></script>
+<script src="{% static 'js/common.min.js' %}"></script>
+<script>
+    $(function () {
+        layui.use(['layer', 'form', 'element'], function () {
+            var $ = layui.jquery;
+            var layer = layui.layer;
+            var form = layui.form;
+            var element = layui.element;
+        });
+    });
+
+    function putCompany(id) {
+        rmsajax.put({
+            url: "{% url 'manager:company' %}" + id + "/",
+            data:$("#form2").serialize(),
+            success: function (result) {
+                if (result['code'] === 200) {
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index);
+                }
+            }
+        })
+
+    }
+</script>
+</html>

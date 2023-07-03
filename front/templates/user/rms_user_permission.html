@@ -1,0 +1,255 @@
+<!--
+@author: 技术-小明
+@time: 2019-04-18 18:58:29
+@file: rms_user_permission.html
+@desc:
+-->
+
+{% extends 'base.html' %}
+
+{% block title %}权限管理{% endblock %}
+
+{% block tan %}
+    <div id="rms-add-user-permission-tan" class="tan">
+
+        <div class="rms-tan-container" style="margin-top: 24px; margin-right: 30px;">
+            <form class="layui-form" id="rms-add-user-permission-form">
+
+                <div class="layui-row" style="margin-bottom: 20px">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">权限名称：</label>
+                        <div class="layui-input-block">
+                            <input id="rms-add-user-permission-name" type="text" name="name" required
+                                   lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">权限URL：</label>
+                        <div class="layui-input-block">
+                            <input id="rms-add-user-permission-url" type="text" name="url" required
+                                   lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">请求方式:</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="method" value="GET" title="GET" checked>
+                            <input type="radio" name="method" value="POST" title="POST">
+                            <input type="radio" name="method" value="PUT" title="PUT">
+                            <input type="radio" name="method" value="DELETE" title="DELETE">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">父级菜单:</label>
+                        <div class="layui-input-block">
+                            {% for permission in data_tan %}
+                                <input type="radio" name="parent" data-type="{{ permission.data_type }}"
+                                       value="{{ permission.id }}"
+                                       title="{{ permission.title }}">
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item" style="margin-left: 110px">
+                        <input type="button" id="rms-add-user-permission-submit" class="layui-btn" value="提交">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="rms-edit-user-permission-tan" class="tan">
+
+        <div class="rms-tan-container" style="margin-top: 24px; margin-right: 30px;">
+            <form class="layui-form" id="rms-edit-user-permission-form">
+
+                <div class="layui-row" style="margin-bottom: 20px">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">权限名称：</label>
+                        <div class="layui-input-block">
+                            <input id="rms-edit-user-permission-name" type="text" name="name" required
+                                   lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">权限URL：</label>
+                        <div class="layui-input-block">
+                            <input id="rms-edit-user-permission-url" type="text" name="url" required
+                                   lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">请求方式:</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="edit-method" value="GET" title="GET">
+                            <input type="radio" name="edit-method" value="POST" title="POST">
+                            <input type="radio" name="edit-method" value="PUT" title="PUT">
+                            <input type="radio" name="edit-method" value="DELETE" title="DELETE">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">父级菜单:</label>
+                        <div class="layui-input-block">
+                            {% for permission in data_tan %}
+
+                                <input type="radio" name="edit-parent" data-type="{{ permission.data_type }}"
+                                       value="{{ permission.id }}"
+                                       title="{{ permission.title }}">
+
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item" style="margin-left: 110px">
+                        <input type="button" id="rms-edit-user-permission-submit" class="layui-btn" value="提交">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content-nav %}
+    <span class="content-nav-item">></span>
+    <span class="content-nav-item">用户管理</span>
+    <span class="content-nav-item">></span>
+    <span class="content-nav-item">权限管理</span>
+{% endblock %}
+
+{% block toolbar %}
+    <div class="content-main-toolbar">
+        <button class="layui-btn layui-btn-sm content-main-tool-left-item" id="rms-add-user-permission">
+            <i class="layui-icon layui-icon-add-1"></i>
+            添加权限
+        </button>
+        <span class="content-main-tool-right-item">共有数据：<strong id="user-permission-total_count">{{ count }}</strong> 条</span>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>名称</th>
+            <th>菜单链接</th>
+            <th>请求方法</th>
+            <th>父级菜单</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="rms-user-permission-data">
+        {% for permission in data %}
+            <tr>
+                <td class="permission-title">{{ permission.title }}</td>
+                <td class="permission-url">{{ permission.url }}</td>
+                <td class="permission-method">{{ permission.method }}</td>
+                {% if permission.menu %}
+                    <td data-type="1" class="permission-parent"
+                        data-value="{{ permission.menu.id }}">{{ permission.menu.title }}</td>
+                {% elif permission.parent %}
+                    <td data-type="0" class="permission-parent"
+                        data-value="{{ permission.parent.id }}">{{ permission.parent.title }}</td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+                <td data-value="{{ permission.id }}">
+                    <button class="layui-btn layui-btn-xs layui-btn-warm rms-edit-user-permission"><i
+                            class="layui-icon layui-icon-edit"></i>编辑
+                    </button>
+                    <button class="layui-btn layui-btn-xs layui-btn-danger rms-delete-user-permission"><i
+                            class="layui-icon layui-icon-delete"></i>删除
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+
+{% block page %}
+    <div id="rms-user-permission-page">
+        {#上一页#}
+        {% if data.has_previous %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ data.previous_page_number }}">上一页</a>
+        {% endif %}
+
+        {# 是否需要出现三个点 #}
+        {% if left_has_more %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="1">1</a>
+            <span class="page-common">...</span>
+        {% endif %}
+
+        {# 左边的页码 #}
+        {% for left_page in left_pages %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ left_page }}">{{ left_page }}</a>
+        {% endfor %}
+
+        {# 当前的页面 #}
+        <span class="cur page-common">{{ current_page }}</span>
+
+        {# 右边的页码 #}
+        {% for right_page in right_pages %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ right_page }}">{{ right_page }}</a>
+        {% endfor %}
+
+        {# 用来控制右边三个点 #}
+        {% if right_has_more %}
+            <span class="page-common">...</span>
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ num_pages }}">{{ num_pages }}</a>
+        {% endif %}
+
+        {#下一页#}
+        {% if data.has_next %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ data.next_page_number }}">下一页</a>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/develop.min.js' %}"></script>
+    <script>
+        $(function () {
+            var permission = new Permission();
+            permission.run();
+        });
+    </script>
+    <script id="rms-user-permission-tpl" type="text/html">
+        {% verbatim %}
+        {{ each data permission index }}
+        <tr>
+            <td class="permission-title">{{ permission.title }}</td>
+            <td class="permission-url">{{ permission.url }}</td>
+            <td class="permission-method">{{ permission.method }}</td>
+            {{ if permission.menu}}
+            <td data-type="1" class="permission-parent" data-value="{{ permission.menu.id }}">{{ permission.menu.title
+                }}
+            </td>
+            {{ else if permission.parent}}
+            <td data-type="0" class="permission-parent" data-value="{{ permission.parent.id }}">{{
+                permission.parent.title }}
+            </td>
+            {{ else }}
+            <td></td>
+            {{ /if }}
+            <td data-value="{{ permission.id }}">
+                <button class="layui-btn layui-btn-xs layui-btn-warm rms-edit-user-permission"><i
+                        class="layui-icon layui-icon-edit"></i>编辑
+                </button>
+                <button class="layui-btn layui-btn-xs layui-btn-danger rms-delete-user-permission"><i
+                        class="layui-icon layui-icon-delete"></i>删除
+                </button>
+            </td>
+        </tr>
+        {{ /each }}
+        {% endverbatim %}
+    </script>
+{% endblock %}

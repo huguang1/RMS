@@ -1,0 +1,198 @@
+<!--@author:无名-->
+<!--@datetime:2019/5/7 0007 15:13-->
+<!--@software: PyCharm-->
+{% extends "base.html" %}
+{% block title %}
+    各组进度
+{% endblock %}
+{% block content %}
+    <div class="layui-tab">
+        <ul class="layui-tab-title" style="margin-bottom:30px">
+            <li class="layui-this">月别数据</li>
+            <li>年度数据</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <div style="margin-bottom: 20px">
+                    <div class="layui-inline" style="margin-bottom: 20px">
+                        <label class="layui-form-label">月份</label>
+                        <div class="layui-input-inline" style="width: 150px;margin-right: 20px;">
+                            <input type="text" name="month-time" id="month-time" placeholder="开始"
+                                   class="layui-input">
+                        </div>
+                        <input class="layui-btn layui-btn-normal" onclick="getMonthInfo()" value="提交">
+                    </div>
+                </div>
+                <div style="margin-bottom: 60px">
+                    <div id="month_table"></div>
+                </div>
+                <div>
+                    <div id="bar" style="width: 800px;height:400px;"></div>
+                </div>
+            </div>
+            <div class="layui-tab-item">
+                <div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">年份</label>
+                        <div class="layui-input-inline" style="width: 150px;margin-right: 20px;">
+                            <input type="text" name="year-time" id="year-time" placeholder="开始" class="layui-input"
+                            >
+                        </div>
+                        <input class="layui-btn layui-btn-normal" onclick="getYearInfo()" value="提交">
+                    </div>
+                </div>
+                <div style="margin-bottom: 20px;margin-top: 40px">
+                    <div id="year_table"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block script %}
+    <script src="{% static 'js/echarts.min.js' %}"></script>
+    <script>
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#month-time', //指定元素
+                trigger: 'click',
+                type: "month",
+                value: new Date(),
+                theme: 'molv',
+                max: '{{ year }}-{{ month }}'
+            });
+            laydate.render({
+                elem: '#year-time', //指定元素
+                trigger: 'click',
+                type: "year",
+                value: new Date(),
+                theme: 'molv',
+                max: '{{ year }}'
+            });
+        });
+
+
+        function showMonthTable(data) {
+            layui.use('table', function () {
+                var table = layui.table;
+                //第一个实例
+                table.render({
+                    elem: '#month_table'
+                    , width: 847
+                    , page: false
+                    , data: data.data
+                    , cols: [[
+                        {field: 'group', title: '祖别', width: 120, fixed: 'left'}
+                        , {field: 'first_count', title: '初试总数', width: 120, sort: true}
+                        , {field: 'last_count', title: '复试总数', width: 120, sort: true}
+                        , {field: 'entry_count', title: '已入职/结案总数', width: 160, sort: true}
+                        , {field: 'fail_count', title: '已放弃总数', width: 140, sort: true}
+                        , {field: 'percent', title: '有效占比', width: 180, sort: true}
+                    ]]
+                });
+            });
+        }
+
+        function showYearTable(data) {
+            layui.use('table', function () {
+                var table = layui.table;
+                //第一个实例
+                table.render({
+                    elem: '#year_table'
+                    , width: 645
+                    , data: data.data
+                    , page: false
+                    , limit: 100
+                    , cols: [[
+                        {field: 'month', title: '', width: 80, sort: true, fixed: 'left'}
+                        , {field: 'first_count', title: '初试总数', width: 160, sort: true}
+                        , {field: 'last_count', title: '复试总数', width: 200, sort: true}
+                        , {field: 'entry_count', title: '已入职总数', width: 200, sort: true}
+                    ]]
+                });
+            });
+        }
+
+        var myChart = echarts.init(document.getElementById('bar'));
+
+        // 使用刚指定的配置项和数据显示图表。
+        function showMonthBar(data) {
+            var source_data = [['product', '初试总数', '复试总数', '已入职/结案总数', '已放弃总数']];
+            $.each(data.data, function (i, item) {
+                var li = [];
+                for (var key in item) {
+                    li.push(item[key])
+                }
+                li.pop();
+                source_data.push(li);
+            });
+            source_data.pop();
+            myChart.setOption({
+                legend: {},
+                tooltip: {},
+                dataset: {
+                    source: source_data
+                },
+                xAxis: {type: 'category'},
+                yAxis: {},
+                // Declare several bar series, each will be mapped
+                // to a column of dataset.source by default.
+                series: [
+                    {type: 'bar'},
+                    {type: 'bar'},
+                    {type: 'bar'},
+                    {type: 'bar'}
+                ],
+            });
+        }
+
+        function showMonth(year, month) {
+            layui.use('layer', function () {
+                var layer = layui.layer;
+                rmsajax.get({
+                    url: "{% url 'report:groupReportAjax' %}",
+                    data: {"type": "month", "year": year, "month": month},
+                    success: function (result) {
+                        if (result['code'] === 200) {
+                            showMonthBar(result);
+                            showMonthTable(result);
+                        }
+                    }
+                })
+            })
+        }
+
+        function showYear(year) {
+            layui.use('layer', function () {
+                var layer = layui.layer;
+                rmsajax.get({
+                    url: "{% url 'report:groupReportAjax' %}",
+                    data:{"type":"year","year":year},
+                    success: function (result) {
+                        if (result['code'] === 200) {
+                            showYearTable(result)
+                        }
+                    }
+                })
+            })
+        }
+
+        showMonth({{ year }}, {{ month }});
+        showYear({{ year }});
+
+        function getMonthInfo() {
+            var [year, month] = $("#month-time").val().split("-");
+            showMonth(year, month);
+        }
+
+        function getYearInfo() {
+            var year = $("#year-time").val();
+            showYear(year);
+        }
+
+
+    </script>
+{% endblock %}

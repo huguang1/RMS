@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}
+    招聘渠道管理
+{% endblock %}
+{% block tan %}
+    <form class="layui-form" action="" id="form1" style="display: none;width: 90%;" >
+    <div style="margin: 10px"></div>
+        {% csrf_token %}
+        <div class="layui-form-item">
+            <label class="layui-form-label">渠道名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" lay-verify="required"
+                       placeholder="请输入渠道名称" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">联系人</label>
+            <div class="layui-input-block">
+                <input type="text" name="link_man" required
+                       lay-verify="required" placeholder="请输入联系人" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">联系方式</label>
+            <div class="layui-input-block">
+                <input type="text" name="contact_way" required lay-verify="required" placeholder="请输入联系方式"
+                       autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                {#                <button type="reset" class="layui-btn layui-btn-primary">重置</button>#}
+                <button class="layui-btn" lay-submit lay-filter="formDemo"
+                        onclick="postRw({{ rw.id }});return false">立即提交
+                </button>
+            </div>
+        </div>
+    </form>
+
+
+{% endblock %}
+{% block content %}
+    <button class="layui-btn" onclick="onAddBtn()">添加渠道</button>
+    <table class="layui-table">
+        <colgroup>
+{#            <col width="150">#}
+{#            <col width="200">#}
+{#            <col>#}
+        </colgroup>
+        <thead>
+        <tr>
+            <th>渠道名称</th>
+            <th>联系人</th>
+            <th>联系方式</th>
+            <th>编辑</th>
+            <th>删除</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for rw in posts %}
+            <tr>
+                <td>{{ rw.name }}</td>
+                <td>{{ rw.link_man }}</td>
+                <td>{{ rw.contact_way }}</td>
+                <td>
+                    <button class="layui-btn layui-btn-warm layui-btn-sm" onclick="editRw({{ rw.id }})">修改</button>
+                </td>
+                <td>
+                    <button class="layui-btn  layui-btn-danger layui-btn-sm" onclick="delRw({{ rw.id }})">删除</button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+{% block paginator %}
+    {% include 'paginator.html' %}
+{% endblock %}
+{% block script %}
+    <script>
+        function onAddBtn() {
+            //页面层-自定义
+            layer.open({
+                type: 1,
+                title: "创建新的渠道",
+                skin: 'layui-layer-rim',
+                area: ['400px', '300px'],
+                content: $("#form1"),
+            });
+        }
+
+        function postRw() {
+            rmsajax.post({
+                data: $("#form1").serialize(),
+                url: "{% url 'manager:recruitmentWay' %}",
+                success: function (result) {
+                    if (result['code'] === 200) {
+                        window.location = window.location.href;
+                    }
+                }
+            })
+        }
+
+        function delRw(id) {
+            rmsajax.delete({
+                url: "{% url 'manager:recruitmentWay' %}" + id + "/",
+                success: function (result) {
+                    window.location = window.location.href;
+                }
+            })
+        }
+
+        function editRw(id) {
+            layer.open({
+                type: 2,
+                title: "编辑渠道",
+                area: ['400px', '300px'],
+                content: "{% url 'manager:recruitmentWay' %}" + id,
+                end: function () {
+                    window.location = window.location.href;
+                }
+            });
+        }
+    </script>
+
+{% endblock %}

@@ -1,0 +1,96 @@
+<!--@author:无名-->
+<!--@datetime:2019/5/12 0012 13:23-->
+<!--@software: PyCharm-->
+{% extends "base.html" %}
+{% block title %}
+    各组目标报告
+{% endblock %}
+{% block content %}
+    <div>
+     <form class="layui-form" autocomplete="off">
+        <div class="layui-form-item" style="display: inline-flex;">
+            <div class="layui-inline" style="margin-left: -40px;">
+                <label class="layui-form-label">年份</label>
+                <div class="layui-input-inline" style="width: 80px;">
+                    <input type="text" name="orderTimeStart" id="year-time" placeholder="开始"
+                           class="layui-input"
+                    >
+                </div>
+                 <label class="layui-form-label" style="margin-left: -40px;">组别</label>
+                {% for group in group_list %}
+                    {% if forloop.first %}
+                        <input type="radio" name="group_id" value="{{ group.id }}" title="{{ group.title }}" checked>
+                    {% else %}
+                    <input type="radio" name="group_id" value="{{ group.id }}" title="{{ group.title }}">
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div>
+                <input class="layui-btn layui-btn-normal" onclick="getTargetInfo()" value="提交" style="width: 160px;">
+            </div>
+        </div>
+    </form>
+    <div id="demo">
+    </div>
+    </div>
+
+{% endblock %}
+{% block script %}
+    <script>
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+            laydate.render({
+                elem: '#year-time', //指定元素
+                trigger: 'click',
+                type: "year",
+                value: new Date(),
+                theme: 'molv',
+                max: '{{ year }}'
+            });
+        });
+
+
+        function target_show(data) {
+            layui.use('table', function () {
+                var table = layui.table;
+                var month_list = data.data.month_list;
+                col = [{field: 'type', title: '月份', width: 180, fixed: 'left'}];
+                $.each(month_list, function (i, item) {
+                    col.push({field: item, title: item + "月", width: 100})
+                });
+                var w = month_list.length * 101 + 182;
+                table.render({
+                    elem: '#demo',
+                    width: w,
+                    data: data.data.report,
+                    page: false,
+                    cols: [col],
+                });
+            })
+        }
+
+        function show_target(year,id) {
+            layui.use('layer', function () {
+                var layer = layui.layer;
+                rmsajax.get({
+                    url: "{% url 'report:targetReportAjax' %}",
+                    data:{"year":year,"group_id":id},
+                    success: function (result) {
+                        if (result['code'] === 200) {
+                            target_show(result);
+                        }
+                    }
+                })
+            })
+        }
+
+        show_target({{ year }},{{ group_list.0.id}});
+
+        function getTargetInfo() {
+            var year= $("#year-time").val();
+            var id = $("input[type='radio']:checked").val();
+            show_target(year,id)
+        }
+
+    </script>
+{% endblock %}

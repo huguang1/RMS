@@ -1,0 +1,239 @@
+{# #author:无名 #}
+{# #datetime:2019/4/18 0018 13:08#}
+{# #software: PyCharm#}
+{% extends "base.html" %}
+{% block title %}
+    外籍需求管理
+{% endblock %}
+{% block tan %}
+    <form class="layui-form" action="" id="form1" style="display: none;width: 90%">
+        {% csrf_token %}
+        <div class="layui-form-item" style="margin-top: 10px">
+            <label class="layui-form-label">对接人</label>
+            <div class="layui-input-block">
+                <select name="hr_id" lay-verify="required">
+                    <option value=""></option>
+                    {% for hr in hr_list %}
+                        <option value={{ hr.id }}>{{ hr.group.title }}--{{ hr.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">岗位</label>
+            <div class="layui-input-block">
+                <select name="job_id" lay-verify="required">
+                    <option value=""></option>
+                    {% for job in job_list %}
+                        <option value={{ job.id }}>{{ job.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">返佣</label>
+            <div class="layui-input-block">
+                <input type="text" name="rebate" required lay-verify="required" placeholder="请输入返佣"
+                       autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">岗位职责</label>
+            <div class="layui-input-block">
+                <textarea name="work" placeholder="请输入岗位职责" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">任职资格</label>
+            <div class="layui-input-block">
+                <textarea name="need" placeholder="请输入任职资格" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-block">
+                <input type="radio" name="sex" value="男" title="男">
+                <input type="radio" name="sex" value="女" title="女">
+                <input type="radio" name="sex" value="男女不限" title="男女不限" checked>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">学历</label>
+            <div class="layui-input-block">
+                <input type="text" name="edu" required lay-verify="required" placeholder="请输入学历"
+                       autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">必备条件</label>
+            <div class="layui-input-block">
+                <textarea name="essential_condition" placeholder="请输入必备条件" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">薪资</label>
+            <div class="layui-input-block">
+                <input type="text" name="salary" required lay-verify="required" placeholder="请输入薪资" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">提成绩效</label>
+            <div class="layui-input-block">
+                <textarea name="performance" placeholder="请输入提成绩效" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">工作时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="work_time" required lay-verify="required" placeholder="请输入工作时间"
+                       autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">工作地点</label>
+            <div class="layui-input-block">
+                <input type="text" name="work_addr" required lay-verify="required" placeholder="请输入工作地点"
+                       autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <input type="text" name="status" required lay-verify="required" placeholder="请输入状态"
+                       autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea name="note" placeholder="请输入备注" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                {#                <button type="reset" class="layui-btn layui-btn-primary">重置</button>#}
+                <button class="layui-btn" lay-submit lay-filter="formDemo" onclick="postUJD();return false">
+                    立即提交
+                </button>
+            </div>
+        </div>
+    </form>
+
+
+{% endblock %}
+{% block content %}
+    <button class="layui-btn" onclick="onAddBtn()">添加限时悬赏</button>
+    <table class="layui-table">
+        {#        <colgroup>#}
+        {#            <col width="150">#}
+        {#            <col width="200">#}
+        {#            <col>#}
+        {#        </colgroup>#}
+        <thead>
+        <tr >
+            <th >对接人</th>
+            <th>岗位</th>
+            <th>返佣</th>
+            <th>岗位职责</th>
+            <th>任职资格</th>
+            <th>性别</th>
+            <th>学历</th>
+            <th>必备条件</th>
+            <th>薪资范围</th>
+            <th>提成绩效</th>
+            <th>工作时间</th>
+            <th>工作地址</th>
+            <th>状态</th>
+            <th>备注</th>
+            <th>编辑</th>
+            <th>删除</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for ujd in posts %}
+            <tr>
+                <td>{{ ujd.hr.username }}</td>
+                <td>{{ ujd.job.name }}</td>
+                <td>{{ ujd.rebate }}</td>
+                <td>{{ ujd.work }}</td>
+                <td>{{ ujd.need }}</td>
+                <td>{{ ujd.get_sex_display }}</td>
+                <td>{{ ujd.edu }}</td>
+                <td>{{ ujd.essential_condition }}</td>
+                <td>{{ ujd.salary }}</td>
+                <td>{{ ujd.performance }}</td>
+                <td>{{ ujd.work_time }}</td>
+                <td>{{ ujd.work_addr }}</td>
+                <td>{{ ujd.status }}</td>
+                <td>{{ ujd.note }}</td>
+                <td>
+                    <button class="layui-btn  layui-btn-warm layui-btn-sm" onclick="editUJD({{ ujd.id }})">编辑
+                    </button>
+                </td>
+                <td>
+                    <button class="layui-btn  layui-btn-danger layui-btn-sm" onclick="delUJD({{ ujd.id }})">删除
+                    </button>
+
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+{% block paginator %}
+    {% include 'paginator.html' %}
+{% endblock %}
+{% block script %}
+    <script>
+        function onAddBtn() {
+            //页面层-自定义
+            layer.open({
+                type: 1,
+                title: "创建新的限时悬赏",
+                skin: 'layui-layer-rim',
+                area: ['800px', '800px'],
+                content: $("#form1"),
+            });
+        }
+
+        function postUJD() {
+            rmsajax.post({
+                data: $("#form1").serialize(),
+                url: "{% url 'manager:urgencyJobDemand' %}",
+                success: function (result) {
+                    if (result['code'] === 200) {
+                        window.location = window.location.href;
+                    }
+                }
+            })
+        }
+
+        function delUJD(id) {
+            rmsajax.delete({
+                url: "{% url 'manager:urgencyJobDemand' %}" + id + "/",
+                success: function (result) {
+                    window.location = window.location.href;
+                }
+            })
+        }
+
+        function editUJD(id) {
+            layer.open({
+                type: 2,
+                title: "编辑公司",
+                area: ['800px', '800px'],
+                content: "{% url 'manager:urgencyJobDemand' %}" + id,
+                end: function () {
+                    window.location = window.location.href;
+                }
+            });
+        }
+    </script>
+
+{% endblock %}

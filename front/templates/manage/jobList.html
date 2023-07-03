@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}
+    岗位管理
+{% endblock %}
+{% block tan %}
+    <form class="layui-form" action="" id="form1" style="display: none;width: 90%">
+    <div style="margin: 20px"></div>
+        {% csrf_token %}
+        <div class="layui-form-item">
+            <label class="layui-form-label">岗位名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" required lay-verify="required" placeholder="请输入岗位名称" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+      <div class="layui-form-item">
+        <div class="layui-input-block">
+            {#                <button type="reset" class="layui-btn layui-btn-primary">重置</button>#}
+            <button class="layui-btn" lay-submit lay-filter="formDemo"
+                    onclick="postJob();return false">立即提交
+            </button>
+        </div>
+    </div>
+    </form>
+
+
+{% endblock %}
+{% block content %}
+    <button class="layui-btn" onclick="onAddBtn()">添加岗位</button>
+    <table class="layui-table">
+{#        <colgroup>#}
+{#            <col width="150">#}
+{#            <col width="200">#}
+{#            <col>#}
+{#        </colgroup>#}
+        <thead>
+        <tr>
+            <th>岗位名称</th>
+            <th>编辑</th>
+            <th>删除</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for job in posts %}
+            <tr>
+                <td>{{ job.name }}</td>
+                <td>
+                    <button class="layui-btn layui-btn-warm layui-btn-sm" onclick="editJob({{ job.id }})">编辑</button>
+
+                </td>
+            <td>
+                <button class="layui-btn  layui-btn-danger layui-btn-sm" onclick="delJob({{ job.id }})">删除</button>
+            </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+{% block paginator %}
+    {% include 'paginator.html' %}
+{% endblock %}
+{% block script %}
+    <script>
+        function onAddBtn() {
+            //页面层-自定义
+            layer.open({
+                type: 1,
+                title: "创建新的岗位",
+                skin: 'layui-layer-rim',
+                area: ['400px', '180px'],
+                content: $("#form1"),
+            });
+        }
+
+        function postJob() {
+            rmsajax.post({
+                data: $("#form1").serialize(),
+                url: "{% url  'manager:job' %}",
+                success: function (result) {
+                    if (result['code'] === 200) {
+                        window.location = window.location.href;
+                    }
+                }
+            })
+        }
+
+        function delJob(id) {
+            rmsajax.delete({
+                url: "{% url 'manager:job' %}" + id+"/",
+                success: function (result) {
+                    window.location = window.location.href;
+                }
+            })
+        }
+
+        function editJob(id) {
+            layer.open({
+                type: 2,
+                title: "编辑岗位",
+                area: ['400px', '180px'],
+                content: "{% url 'manager:job' %}" + id,
+                end: function () {
+                    window.location = window.location.href;
+                }
+            });
+        }
+    </script>
+
+{% endblock %}

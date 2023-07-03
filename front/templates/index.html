@@ -1,0 +1,44 @@
+<!--
+@author: 技术-小明
+@time: 2019-04-05 16:26:31
+@file: index.html
+@desc:
+-->
+
+{% extends 'base.html' %}
+
+{% block title %}首页{% endblock %}
+
+{% block content-nav %}
+    <span class="content-nav-item">></span>
+    <span class="content-nav-item">我的桌面</span>
+{% endblock %}
+
+{% block toolbar %}
+    <div class="content-main-toolbar"></div>
+{% endblock %}
+
+{% block content %}
+
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>昵称</th>
+            <th>加入时间</th>
+            <th>签名</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>贤心</td>
+            <td>2016-11-29</td>
+            <td>人生就像是一场修行</td>
+        </tr>
+        <tr>
+            <td>许闲心</td>
+            <td>2016-11-28</td>
+            <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}

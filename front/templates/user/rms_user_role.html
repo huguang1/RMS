@@ -1,0 +1,210 @@
+<!--
+@author: 技术-小明
+@time: 2019-04-18 18:32:00
+@file: rms_user_role.html
+@desc:
+-->
+
+{% extends 'base.html' %}
+
+{% block title %}角色管理{% endblock %}
+
+{% block tan %}
+    <div id="rms-add-user-role-tan" class="tan">
+
+        <div class="rms-tan-container" style="margin-top: 24px; margin-right: 30px;">
+            <form class="layui-form" id="rms-add-user-role-form">
+
+                <div class="layui-row" style="margin-bottom: 20px">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">角色名称：</label>
+                        <div class="layui-input-block">
+                            <input id="rms-add-user-role-name" type="text" name="name" required
+                                   lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+
+                        <label class="layui-form-label">选择权限：</label>
+                        <div class="layui-input-block">
+                            {% for permission in permissions %}
+                                <div class="layui-card">
+                                    <div class="layui-card-header" style="padding: 0;">
+                                        <h2 class="layui-colla-title">{{ permission.menu.title }}
+                                            <i class="layui-icon layui-colla-icon"></i>
+                                        </h2>
+                                    </div>
+                                    <div class="layui-card-body">
+                                        {% for children in permission.children %}
+                                            <input type="checkbox" name="add-permission" value="{{ children.id  }}" data-value="{{ children.id }}"
+                                                   title="{{ children.title }}" lay-skin="primary">
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item" style="margin-left: 110px">
+                        <input type="button" id="rms-add-user-role-submit" class="layui-btn" value="提交">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="rms-edit-user-role-tan" class="tan">
+
+        <div class="rms-tan-container" style="margin-top: 24px; margin-right: 30px;">
+            <form class="layui-form" id="rms-edit-user-role-form">
+
+                <div class="layui-row" style="margin-bottom: 20px">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">角色名称：</label>
+                        <div class="layui-input-block">
+                            <input id="rms-edit-user-role-name" type="text" name="name" required
+                                   lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+
+                        <label class="layui-form-label">选择权限：</label>
+                        <div class="layui-input-block">
+                            {% for permission in permissions %}
+                                <div class="layui-card">
+                                    <div class="layui-card-header" style="padding: 0;">
+                                        <h2 class="layui-colla-title">{{ permission.menu.title }}
+                                            <i class="layui-icon layui-colla-icon"></i>
+                                        </h2>
+                                    </div>
+                                    <div class="layui-card-body">
+                                        {% for children in permission.children %}
+                                            <input type="checkbox" name="edit-permission" value="{{ children.id }}" data-value="{{ children.id }}"
+                                                   title="{{ children.title }}" lay-skin="primary">
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item" style="margin-left: 110px">
+                        <input type="button" id="rms-edit-user-role-submit" class="layui-btn" value="提交">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content-nav %}
+    <span class="content-nav-item">></span>
+    <span class="content-nav-item">用户管理</span>
+    <span class="content-nav-item">></span>
+    <span class="content-nav-item">角色管理</span>
+{% endblock %}
+
+{% block toolbar %}
+    <div class="content-main-toolbar">
+        <button class="layui-btn layui-btn-sm content-main-tool-left-item" id="rms-add-user-role">
+            <i class="layui-icon layui-icon-add-1"></i>
+            添加角色
+        </button>
+        <span class="content-main-tool-right-item">共有数据：<strong id="user-role-total_count">{{ count }}</strong> 条</span>
+    </div>
+{% endblock %}
+
+{% block content %}
+ <table class="layui-table">
+    <thead>
+    <tr>
+        <th>角色名称</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody id="rms-user-role-data">
+    {% for role in data %}
+        <tr>
+            <td class="role-name">{{ role.name }}</td>
+            <td data-value="{{ role.id }}" data-p="{% for permission in role.permissions.all %}{{ permission.id }},{% endfor %}">
+                <button class="layui-btn layui-btn-xs layui-btn-warm rms-edit-user-role" href="#"><i
+                        class="layui-icon layui-icon-edit"></i>编辑权限
+                </button>
+                <button class="layui-btn layui-btn-xs layui-btn-danger rms-delete-user-role" href="#"><i
+                        class="layui-icon layui-icon-delete"></i>删除
+                </button>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+ </table>
+{% endblock %}
+
+{% block page %}
+    <div id="rms-user-role-page">
+        {#上一页#}
+        {% if data.has_previous %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ data.previous_page_number }}">上一页</a>
+        {% endif %}
+
+        {# 是否需要出现三个点 #}
+        {% if left_has_more %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="1">1</a>
+            <span class="page-common">...</span>
+        {% endif %}
+
+        {# 左边的页码 #}
+        {% for left_page in left_pages %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ left_page }}">{{ left_page }}</a>
+        {% endfor %}
+
+        {# 当前的页面 #}
+        <span class="cur page-common">{{ current_page }}</span>
+
+        {# 右边的页码 #}
+        {% for right_page in right_pages %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ right_page }}">{{ right_page }}</a>
+        {% endfor %}
+
+        {# 用来控制右边三个点 #}
+        {% if right_has_more %}
+            <span class="page-common">...</span>
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ num_pages }}">{{ num_pages }}</a>
+        {% endif %}
+
+        {#下一页#}
+        {% if data.has_next %}
+            <a class="page-common page-btn" href="javascript: void(0);" data-p="{{ data.next_page_number }}">下一页</a>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/user.min.js' %}"></script>
+    <script>
+        $(function () {
+            var role = new Role();
+            role.run();
+        });
+    </script>
+
+    <script id="rms-user-role-tpl" type="text/html">
+        {% verbatim %}
+        {{ each data role index }}
+        <tr>
+            <td class="role-name">{{ role.name }}</td>
+            <td data-value="{{ role.id }}" data-p="{{ each role.permissions permission index }}{{ permission.id }},{{ /each }}">
+                <button class="layui-btn layui-btn-xs layui-btn-warm rms-edit-user-role"><i
+                        class="layui-icon layui-icon-edit"></i>编辑权限
+                </button>
+                <button class="layui-btn layui-btn-xs layui-btn-danger rms-delete-user-role"><i
+                        class="layui-icon layui-icon-delete"></i>删除
+                </button>
+            </td>
+        </tr>
+        {{ /each }}
+        {% endverbatim %}
+    </script>
+{% endblock %}

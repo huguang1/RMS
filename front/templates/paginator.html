@@ -1,0 +1,23 @@
+{# #author:无名 #}
+{# #datetime:2019/4/19 0019 14:18#}
+{# #software: PyCharm#}
+ <div class="layui-box layui-laypage layui-laypage-default">
+        {% if posts.has_previous %}
+            <a class="layui-laypage-prev" href="?p={{ posts.previous_page_number }}">上一页</a>
+        {% else %}
+            <a class="layui-laypage-prev layui-disabled">上一页</a>
+        {% endif %}
+        {% for i in posts.paginator.page_num_range %}
+            {% if i == posts.number %}
+               <span class="layui-laypage-curr"><em class="layui-laypage-em"></em><em>{{ i }}</em></span>
+            {% else %}
+                <a href="?p={{ i }}" data-page="{{ i }}">{{ i }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if posts.has_next %}
+                <a class="layui-laypage-next" href="?p={{ posts.next_page_number }}">下一页
+                </a>
+        {% else %}
+            <a class="layui-laypage-next layui-disabled">下一页</a>
+        {% endif %}
+    </div>
